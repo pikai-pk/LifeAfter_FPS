@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>明日之后帧率助手</AssemblyName>
+    <Version>1.0.1</Version>
+    <Product>明日之后帧率助手</Product>
+    <Description>离线帧率档位选择、校验、备份及恢复</Description>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <DebugType>none</DebugType>
+  </PropertyGroup>
+  <ItemGroup><PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" /></ItemGroup>
+</Project>

@@ -1,0 +1,27 @@
+# Build output and distributables (uploaded to GitHub Releases separately)
+**/bin/
+**/obj/
+/发行版/
+/程序/*.exe
+/程序/runtime/
+
+# Local game material, test fixtures and personal operational data
+/research/
+/tests/game-copy-*/
+/tests/transaction-*/
+/tests/*verification.json
+/tests/publish-check-*/
+/tests/*.csv
+**/backups/
+**/logs/
+**/settings.json
+*.npk
+*.hexlic
+*.lock
+*.tmp
+*.pdb
+
+# Editor state
+.vs/
+.vscode/
+*.user
