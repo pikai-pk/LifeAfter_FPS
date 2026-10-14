@@ -13,4 +13,5 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
   <ItemGroup><PackageReference Include="K4os.Compression.LZ4" Version="1.3.8" /></ItemGroup>
+  <ItemGroup><EmbeddedResource Include="../免责声明.md" LogicalName="FrameUnlocker.Disclaimer" /></ItemGroup>
 </Project>

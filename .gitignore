@@ -4,6 +4,12 @@
 /发行版/
 /程序/*.exe
 /程序/runtime/
+/overlay/发行版/
+/overlay/程序/*.exe
+/overlay/程序/*.obj
+/overlay/程序/*.json
+/overlay/tests/generic-live-*/
+*.obj
 
 # Local game material, test fixtures and personal operational data
 /research/

@@ -18,6 +18,11 @@ $verification = Start-Process -FilePath (Join-Path $releaseRoot '明日之后帧
 if ($verification.ExitCode -ne 0) { throw '界面档位路由测试失败' }
 $ui = Get-Content -LiteralPath $uiReport -Raw | ConvertFrom-Json
 if (!$ui.passed -or $ui.editable) { throw '界面档位校验失败' }
+$agreementReport = Join-Path $testRoot 'agreement-verification.json'
+$verification = Start-Process -FilePath (Join-Path $releaseRoot '明日之后帧率助手.exe') -ArgumentList @('--verify-agreement', ('"' + $agreementReport + '"')) -PassThru -Wait -WindowStyle Hidden
+if ($verification.ExitCode -ne 0) { throw '使用协议门控测试失败' }
+$agreement = Get-Content -LiteralPath $agreementReport -Raw | ConvertFrom-Json
+if (!$agreement.passed) { throw '使用协议验证失败' }
 $previousHome = $env:FPS_TEST_HOME
 $previousArchive = $env:FPS_TEST_ARCHIVE
 $previousFps = $env:FPS_TEST_FPS
@@ -37,6 +42,7 @@ if (!$e2e.passed -or !$e2e.originalUnchanged -or !$e2e.copyFullyRestored) { thro
 $summary = [ordered]@{
     version = $Version; testedAt = [DateTime]::UtcNow.ToString('o'); platform = 'Windows x64'
     uiPresets = $ui.presets; defaultFps = $ui.selected; manualFpsInput = $ui.editable
+    agreement = $agreement
     engineTests = @{ passed = 9; failed = 0 }
     archiveCopyIntegration = @{ passed = $e2e.passed; sourceUnchanged = $e2e.originalUnchanged; fullyRestored = $e2e.copyFullyRestored; steps = @($e2e.runs | ForEach-Object { $_.result }) }
     runtimeFpsMeasured = $false
@@ -44,9 +50,11 @@ $summary = [ordered]@{
 $summary | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $releaseRoot '验证结果.json') -Encoding utf8
 Copy-Item -LiteralPath (Join-Path $projectRoot '使用说明.md') -Destination $releaseRoot -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination $releaseRoot -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot '免责声明.md') -Destination $releaseRoot -Force
 # Whitelist shipping files: never include local logs, personal backups or settings.
 $files = @((Get-Item -LiteralPath (Join-Path $releaseRoot '明日之后帧率助手.exe')),
     (Get-Item -LiteralPath (Join-Path $releaseRoot 'README.md')),
+    (Get-Item -LiteralPath (Join-Path $releaseRoot '免责声明.md')),
     (Get-Item -LiteralPath (Join-Path $releaseRoot '使用说明.md')),
     (Get-Item -LiteralPath (Join-Path $releaseRoot '验证结果.json')))
 foreach ($folder in @('engine','runtime','licenses')) { $files += @(Get-ChildItem -LiteralPath (Join-Path $releaseRoot $folder) -File -Recurse) }

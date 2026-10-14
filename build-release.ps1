@@ -15,4 +15,5 @@ foreach ($folder in @('engine','runtime','licenses')) {
 foreach ($folder in @('backups','logs')) { New-Item -ItemType Directory -Path (Join-Path $releaseRoot $folder) -Force | Out-Null }
 Copy-Item -LiteralPath (Join-Path $projectRoot '使用说明.md') -Destination $releaseRoot -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination $releaseRoot -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot '免责声明.md') -Destination $releaseRoot -Force
 Write-Output $releaseRoot

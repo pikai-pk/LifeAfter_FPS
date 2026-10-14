@@ -27,6 +27,11 @@ internal static class Program
             catch (Exception e) { using var error = new StreamWriter(Console.OpenStandardError()); error.Write(e.Message); return 1; }
         }
         ApplicationConfiguration.Initialize();
+        if (args.Length == 2 && args[0] == "--verify-agreement")
+        {
+            File.WriteAllText(args[1], JsonSerializer.Serialize(UserAgreement.Verify(), new JsonSerializerOptions { WriteIndented = true }));
+            return 0;
+        }
         if (args.Length == 2 && args[0] == "--verify-ui")
         {
             using var form = new MainForm(loadPreferences: false);
@@ -35,6 +40,7 @@ internal static class Program
         }
         Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
         Application.ThreadException += (_, e) => MessageBox.Show(e.Exception.Message, "操作未完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        if (!UserAgreement.EnsureAccepted()) return 0;
         Application.Run(new MainForm());
         return 0;
     }
@@ -54,6 +60,7 @@ internal sealed class MainForm : Form
     readonly Button restore = new() { Text = "恢复备份", AutoSize = true };
     readonly Button browse = new() { Text = "选择目录", AutoSize = true };
     readonly Button openBackups = new() { Text = "打开备份目录", AutoSize = true };
+    readonly Button agreement = new() { Text = "使用协议", AutoSize = true };
     static readonly string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LifeAfterFrameUnlocker", "settings.json");
     readonly string home = AppContext.BaseDirectory;
     bool busy;
@@ -85,7 +92,7 @@ internal sealed class MainForm : Form
         fpsRow.Controls.Add(new Label { Text = "帧率档位", AutoSize = true, Margin = new Padding(0, 5, 12, 0) }); fpsRow.Controls.Add(fps);
         fpsRow.Controls.Add(new Label { Text = "选择上限后，预览补丁 → 备份并应用", AutoSize = true, Margin = new Padding(10, 5, 0, 0) }); layout.Controls.Add(fpsRow);
         var actions = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Top, Margin = new Padding(0, 0, 0, 14) };
-        foreach (var button in new[] { check, plan, apply, restore, openBackups }) { button.Padding = new Padding(10, 7, 10, 7); button.Margin = new Padding(0, 0, 10, 0); actions.Controls.Add(button); }
+        foreach (var button in new[] { check, plan, apply, restore, openBackups, agreement }) { button.Padding = new Padding(10, 7, 10, 7); button.Margin = new Padding(0, 0, 10, 0); actions.Controls.Add(button); }
         apply.BackColor = Color.FromArgb(39, 91, 196); apply.ForeColor = Color.White; apply.FlatStyle = FlatStyle.Flat;
         layout.Controls.Add(actions); status.Margin = new Padding(0, 0, 0, 12); layout.Controls.Add(status); layout.Controls.Add(details);
         layout.Controls.Add(new Label { Text = "先退出游戏及更新器。实际 FPS 取决于硬件与同步设置；包体不匹配时停止写入。", AutoSize = true, Margin = new Padding(0, 12, 0, 0) });
@@ -94,6 +101,7 @@ internal sealed class MainForm : Form
         check.Click += async (_, _) => await Run("check");
         plan.Click += async (_, _) => await Run("plan");
         apply.Click += async (_, _) => await Run("apply");
+        agreement.Click += (_, _) => { using var dialog = new AgreementForm(); dialog.ShowDialog(this); };
         openBackups.Click += (_, _) => {
             try { var folder = Path.Combine(home, "backups"); Directory.CreateDirectory(folder); Process.Start(new ProcessStartInfo(folder) { UseShellExecute = true }); }
             catch (Exception e) { MessageBox.Show(this, e.Message, "无法打开备份目录"); }
