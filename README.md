@@ -14,7 +14,7 @@ Windows x64 本地帧率档位助手，当前版本 **v1.0.1**。提供版本检
 
 ## 下载与使用
 
-在本仓库的 **Releases** 下载 `明日之后帧率助手-v1.0.1-win-x64.zip`。完整解压到可写目录，双击 `明日之后帧率助手.exe`。发行包包含运行环境，无需安装 .NET 或 Node.js。
+在本仓库的 [Releases](https://github.com/pikai-pk/LifeAfter_FPS/releases) 下载 `LifeAfter_FPS-v1.0.1-win-x64.zip`。完整解压到可写目录，双击 `明日之后帧率助手.exe`。发行包包含运行环境，无需安装 .NET 或 Node.js。
 
 1. 选择包含 `mingrizhihou.exe` 的游戏安装目录，点击 **检查版本**。
 2. 在下拉列表选择档位。首次启动和从旧默认值版本首次升级时选中 **120 FPS**；之后记住上次选择。

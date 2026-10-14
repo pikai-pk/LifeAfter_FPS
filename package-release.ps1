@@ -56,7 +56,8 @@ $sums = $files | Sort-Object FullName | ForEach-Object {
 }
 $sums | Set-Content -LiteralPath (Join-Path $releaseRoot 'SHA256SUMS.txt') -Encoding utf8
 $files += Get-Item -LiteralPath (Join-Path $releaseRoot 'SHA256SUMS.txt')
-$zipPath = Join-Path $projectRoot "发行版/$releaseName.zip"
+$zipName = "LifeAfter_FPS-v$Version-win-x64.zip"
+$zipPath = Join-Path $projectRoot "发行版/$zipName"
 $stream = [IO.File]::Open($zipPath, [IO.FileMode]::Create, [IO.FileAccess]::Write, [IO.FileShare]::None)
 $zip = [IO.Compression.ZipArchive]::new($stream, [IO.Compression.ZipArchiveMode]::Create)
 try {
@@ -67,5 +68,5 @@ try {
     foreach ($folder in @('backups','logs')) { $zip.CreateEntry("$releaseName/$folder/") | Out-Null }
 } finally { $zip.Dispose(); $stream.Dispose() }
 $archiveHash = Get-FileHash -LiteralPath $zipPath -Algorithm SHA256
-"$($archiveHash.Hash.ToLowerInvariant())  $releaseName.zip" | Set-Content -LiteralPath ($zipPath + '.sha256') -Encoding utf8
+"$($archiveHash.Hash.ToLowerInvariant())  $zipName" | Set-Content -LiteralPath ($zipPath + '.sha256') -Encoding utf8
 Get-Item -LiteralPath $zipPath | Select-Object FullName,Length
